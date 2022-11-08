@@ -1,0 +1,58 @@
+---
+
+- name: "create operatorgroup in {{ namespace_sso }}"
+  import_role:
+    name: ../roles/operatorgroup
+  vars:
+    operatorgroup_name: "{{ namespace_sso }}"
+    operatorgroup_namespace: "{{ namespace_sso }}"
+    operatorgroup_target_namespace: "{{ namespace_sso }}"
+
+- name: "deploy sso operator in {{ namespace_sso }}"
+  import_role:
+    name: ../roles/operator_olm
+  vars:
+    operator_name: sso-operator
+    packagemanifest: "{{ sso_operator_packagemanifest }}"
+    subscription_channel: "{{ sso_operator_subscription_channel }}"
+    subscription_namespace: "{{ namespace_sso }}"
+    subscription_name: "{{ sso_operator_subscription_name }}"
+    automatic_installplan_approval: "{{ sso_operator_subscription_automatic_installplan_approval }}"
+    subscription_starting_csv: "{{ sso_operator_subscription_starting_csv  }}"
+    csv_prefix: "{{ sso_operator_csv_prefix }}"
+
+- name: "wait until sso operator is active in {{ namespace_sso }}"
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: "{{ sso_operator_deployment_name }}"
+    namespace: "{{ namespace_sso }}"
+    wait_sleep: 10
+    wait_timeout: 360
+
+- name:  pause 10 seconds to wait for sso related CSVs to be registered with kubernetes
+  ansible.builtin.pause:
+    seconds: 10
+
+- name: "create keycloak custom resource"
+  k8s:
+    state: present
+    name: rhsso
+    namespace: "{{ namespace_sso }}"
+    definition: "{{ lookup('template', 'templates/'+ keycloak_cr_template) | from_yaml }} "
+
+- name: "create keycloak route"
+  k8s:
+    state: present
+    kind: Route
+    name: sso
+    namespace: "{{ namespace_sso }}"
+    definition: "{{ lookup('template', 'templates/'+ keycloak_route_template) | from_yaml }} "
+
+- name: "wait until sso server database is active in {{ namespace_sso }}"
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: "keycloak-postgresql"
+    namespace: "{{ namespace_sso }}"
+    wait_sleep: 10
+    wait_timeout: 90
+

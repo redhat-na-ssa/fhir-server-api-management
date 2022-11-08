@@ -1,0 +1,50 @@
+---
+
+#############    General    #######################
+home_dir: "{{ playbook_dir }}/.."
+
+# resources dir
+resources_base_dir: "{{ home_dir }}/resources"
+
+# oc executable
+openshift_cli: oc
+
+# The OCP user that will own all resources in the generated OCP namespace
+project_admin: user1
+
+project_annotations:
+
+#################################################
+
+
+
+##############      SSO   #######################
+
+# Namespace where SSO will be installed
+namespace_sso: redhat-rhoam-rhsso
+
+sso_realm_id: "{{ project_admin }}-daybreak"
+
+zync_sso_client_secret: 21b503a3-0b50-4e17-8ef7-167ab973c171
+
+github_client_id: changeme
+github_client_secret: changeme
+#################################################
+
+
+
+
+#########     services    ##############
+# Name of the OCP project to deploy this application to
+project_name: "{{ project_admin }}-services"
+
+#########################################
+
+
+
+#########     3scale      ##############
+apimanager_namespace: redhat-rhoam-3scale
+apigw_namespace: "{{ project_name }}"
+apigw_hostname_subcontext: "gw-{{ apigw_namespace }}"
+
+########################################

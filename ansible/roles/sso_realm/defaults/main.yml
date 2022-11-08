@@ -1,0 +1,12 @@
+---
+
+sso_admin_credentials_secret: credential-rhsso
+
+siteadmin_template: "siteadmin-user.json"
+siteadmin_add_role: "add-role-to-siteadmin.json"
+
+sso_config_configmap: sso-config
+
+smtp_host:
+smtp_passwd:
+smtp_userid:

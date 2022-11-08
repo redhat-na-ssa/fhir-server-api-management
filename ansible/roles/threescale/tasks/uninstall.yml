@@ -1,0 +1,49 @@
+---
+
+- name: "delete product {{ api_product_name }}"
+  k8s:
+    state: absent
+    name: "{{ api_product_name }}"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Product
+
+
+- name: "Delete backend {{ backend_name }}"
+  k8s:
+    state: absent
+    name: "{{ backend_name }}"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Backend
+
+
+- name: "delete tenant {{ tenant_name }}"
+  k8s:
+    state: absent
+    name: "{{ tenant_name }}"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Tenant
+  when: delete_tenant|bool == true
+
+- name: "delete tenant secret {{ tenant_name }}-admin-passwd-secret"
+  k8s:
+    state: absent
+    name: "{{ tenant_name }}-admin-passwd-secret"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Secret
+  when: delete_tenant|bool == true
+
+- name: "delete tenant secret {{ tenant_name }}-generated-secret"
+  k8s:
+    state: absent
+    name: "{{ tenant_name }}-generated-secret"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Secret
+  when: delete_tenant|bool == true
+
+- name: "delete tenant secret {{ tenant_access_token_secret }}"
+  k8s:
+    state: absent
+    name: "{{ tenant_access_token_secret }}"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Secret
+  when: delete_tenant|bool == true
