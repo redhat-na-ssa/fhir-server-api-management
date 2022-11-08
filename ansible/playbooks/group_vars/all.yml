@@ -41,6 +41,9 @@ project_name: "{{ project_admin }}-services"
 #########################################
 
 
+##########    ODF   ###########
+namespace_odf: openshift-storage
+###############################
 
 #########     3scale      ##############
 apimanager_namespace: redhat-rhoam-3scale

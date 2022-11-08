@@ -1,0 +1,38 @@
+---
+
+- name: "delete storagesystem custom resource"
+  k8s:
+    state: absent
+    kind: StorageSystem
+    api_version: odf.openshift.io/v1alpha1
+    name: ocs-storagecluster-storagesystem
+    namespace: "{{ namespace }}"
+  when: undeploy_odf is defined and undeploy_odf == "true"
+
+- name: "delete odf operator in {{ namespace_odf }}"
+  import_role:
+    name: ../roles/operator_olm
+    tasks_from: uninstall
+  vars:
+    operator_name: odf-operator
+    subscription_namespace: "{{ namespace_odf }}"
+    subscription_name: "{{ odf_operator_subscription_name }}"
+    csv_prefix: "{{ odf_operator_csv_prefix }}"
+  when: undeploy_odf is defined and undeploy_odf == "true"
+
+- name: "delete operatorgroup from {{ namespace_odf }} namespace"
+  import_role:
+    name: ../roles/operatorgroup
+    tasks_from: uninstall
+  vars:
+    operatorgroup_name: "{{ namespace_odf }}"
+    operatorgroup_namespace: "{{ namespace_odf }}"
+  when: undeploy_odf is defined and undeploy_odf == "true"
+
+- name: "delete namespace {{ namespace_odf }}"
+  k8s:
+    state: absent
+    name: "{{ namespace_odf }}"
+    kind: Project
+    api_version: project.openshift.io/v1
+  when: undeploy_odf is defined and undeploy_odf == "true"

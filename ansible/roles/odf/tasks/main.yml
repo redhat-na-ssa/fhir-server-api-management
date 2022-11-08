@@ -1,0 +1,50 @@
+---
+
+- name: "create operatorgroup in {{ namespace_odf }}"
+  import_role:
+    name: ../roles/operatorgroup
+  vars:
+    operatorgroup_name: "{{ namespace_odf }}"
+    operatorgroup_namespace: "{{ namespace_odf }}"
+    operatorgroup_target_namespace: "{{ namespace_odf }}"
+
+- name: "deploy odf operator in {{ namespace_odf }}"
+  import_role:
+    name: ../roles/operator_olm
+  vars:
+    operator_name: "{{ odf_operator_packagemanifest }}"
+    packagemanifest: "{{ odf_operator_packagemanifest }}"
+    subscription_channel: "{{ odf_operator_subscription_channel }}"
+    subscription_namespace: "{{ namespace_odf }}"
+    subscription_name: "{{ odf_operator_subscription_name }}"
+    automatic_installplan_approval: "{{ odf_operator_subscription_automatic_installplan_approval }}"
+    subscription_starting_csv: "{{ odf_operator_subscription_starting_csv  }}"
+    csv_prefix: "{{ odf_operator_csv_prefix }}"
+
+- name: "wait until ODF operator is active in {{ namespace_odf }}"
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: "{{ odf_operator_deployment_name }}"
+    namespace: "{{ namespace_odf }}"
+    wait_sleep: 10
+    wait_timeout: 360
+
+- name:  pause 10 seconds to wait for ODF related CSVs to be registered with kubernetes
+  ansible.builtin.pause:
+    seconds: 10
+
+- name: "create ODF custom resource"
+  k8s:
+    state: present
+    name: rhsso
+    namespace: "{{ namespace_odf }}"
+    definition: "{{ lookup('template', 'templates/'+ odf_cr_template) | from_yaml }} "
+
+- name: "wait until ODF is active in {{ namespace_odf }}"
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: "system-app"
+    namespace: "{{ namespace_odf }}"
+    wait_sleep: 10
+    wait_timeout: 90
+

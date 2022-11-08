@@ -1,0 +1,16 @@
+---
+
+# odf operator
+odf_operator_subscription_template: subscription.yml
+odf_operator_packagemanifest: odf-operator
+odf_operator_deployment_name: nooba-operator
+odf_operator_subscription_name: odf-operator
+odf_operator_subscription_channel: stable-4.11
+odf_operator_subscription_automatic_installplan_approval: false
+odf_operator_subscription_starting_csv: ""
+odf_operator_csv_prefix: odf-operator
+
+odf_cr_template: odf_cr.yml
+
+
+undeploy_odf: false

@@ -1,6 +1,6 @@
 ---
 
-- name: Deploy threescale
+- name: Deploy API tenant resources
   hosts: localhost
   connection: local
   gather_facts: false
@@ -9,4 +9,4 @@
     - group_vars/all.yml
 
   tasks:
-    - include: tasks/threescale.yml
+    - include: tasks/api_tenant.yml

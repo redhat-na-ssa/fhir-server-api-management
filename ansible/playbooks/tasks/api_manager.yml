@@ -1,0 +1,21 @@
+---
+
+- set_fact:
+    namespace: "{{ apimanager_namespace }}"
+    resources_dir: "{{ resources_base_dir }}/api_manager"
+    work_dir_name: api_manager
+- include_role:
+    name: ../roles/api_manager
+  when: >
+    ACTION is not defined or
+    ACTION is none or
+    ACTION|trim() == "" or
+    ACTION|trim() == "install"
+
+
+- include_role:
+    name: ../roles/api_manager
+    tasks_from: uninstall
+  when: >
+    ACTION is defined and
+    ACTION|trim() == "uninstall"

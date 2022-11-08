@@ -1,0 +1,16 @@
+---
+
+# threescale operator
+threescale_operator_subscription_template: subscription.yml
+threescale_operator_packagemanifest: 3scale-operator
+threescale_operator_deployment_name: 3scale-operator
+threescale_operator_subscription_name: 3scale-operator
+threescale_operator_subscription_channel: threescale-2.12
+threescale_operator_subscription_automatic_installplan_approval: false
+threescale_operator_subscription_starting_csv: ""
+threescale_operator_csv_prefix: 3scale-operator
+
+threescale_cr_template: threescale_cr.yml
+
+
+undeploy_api_manager: false

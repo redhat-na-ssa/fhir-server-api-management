@@ -1,0 +1,50 @@
+---
+
+- name: "create operatorgroup in {{ apimanager_namespace }}"
+  import_role:
+    name: ../roles/operatorgroup
+  vars:
+    operatorgroup_name: "{{ apimanager_namespace }}"
+    operatorgroup_namespace: "{{ apimanager_namespace }}"
+    operatorgroup_target_namespace: "{{ apimanager_namespace }}"
+
+- name: "deploy sso operator in {{ apimanager_namespace }}"
+  import_role:
+    name: ../roles/operator_olm
+  vars:
+    operator_name: "{{ threescale_operator_packagemanifest }}"
+    packagemanifest: "{{ threescale_operator_packagemanifest }}"
+    subscription_channel: "{{ threescale_operator_subscription_channel }}"
+    subscription_namespace: "{{ apimanager_namespace }}"
+    subscription_name: "{{ threescale_operator_subscription_name }}"
+    automatic_installplan_approval: "{{ threescale_operator_subscription_automatic_installplan_approval }}"
+    subscription_starting_csv: "{{ threescale_operator_subscription_starting_csv  }}"
+    csv_prefix: "{{ threescale_operator_csv_prefix }}"
+
+- name: "wait until API Manager operator is active in {{ apimanager_namespace }}"
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: "{{ threescale_operator_deployment_name }}"
+    namespace: "{{ apimanager_namespace }}"
+    wait_sleep: 10
+    wait_timeout: 360
+
+- name:  pause 10 seconds to wait for API Manager related CSVs to be registered with kubernetes
+  ansible.builtin.pause:
+    seconds: 10
+
+- name: "create API Manager custom resource"
+  k8s:
+    state: present
+    name: rhsso
+    namespace: "{{ apimanager_namespace }}"
+    definition: "{{ lookup('template', 'templates/'+ threescale_cr_template) | from_yaml }} "
+
+- name: "wait until threescale system-app deployment is active in {{ apimanager_namespace }}"
+  kubernetes.core.k8s_info:
+    kind: Deployment
+    name: "system-app"
+    namespace: "{{ apimanager_namespace }}"
+    wait_sleep: 10
+    wait_timeout: 90
+
