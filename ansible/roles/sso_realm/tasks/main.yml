@@ -1,13 +1,5 @@
 ---
 
-- name: wait for sso to be ready
-  kubernetes.core.k8s_info:
-    kind: Statefulset
-    name: keycloak
-    namespace: "{{ namespace_sso }}"
-    wait_sleep: 10
-    wait_timeout: 90
-
 # https://github.com/Emergency-Response-Demo/install/issues/71
 - name: "Define random value for variable siteadmin_role_id "
   set_fact:

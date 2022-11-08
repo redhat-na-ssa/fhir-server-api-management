@@ -21,30 +21,20 @@
     subscription_starting_csv: "{{ odf_operator_subscription_starting_csv  }}"
     csv_prefix: "{{ odf_operator_csv_prefix }}"
 
-- name: "wait until ODF operator is active in {{ namespace_odf }}"
-  kubernetes.core.k8s_info:
-    kind: Deployment
-    name: "{{ odf_operator_deployment_name }}"
-    namespace: "{{ namespace_odf }}"
-    wait_sleep: 10
-    wait_timeout: 360
-
-- name:  pause 10 seconds to wait for ODF related CSVs to be registered with kubernetes
-  ansible.builtin.pause:
-    seconds: 10
-
 - name: "create ODF custom resource"
   k8s:
     state: present
-    name: rhsso
+    name: "{{ odf_name }}"
     namespace: "{{ namespace_odf }}"
     definition: "{{ lookup('template', 'templates/'+ odf_cr_template) | from_yaml }} "
 
-- name: "wait until ODF is active in {{ namespace_odf }}"
+- name: "wait until StorageSystem {{ odf_name }} is active in {{ namespace_odf }}"
   kubernetes.core.k8s_info:
-    kind: Deployment
-    name: "system-app"
+    kind: StorageSystem
+    api_version: odf.openshift.io/v1alpha1
+    name: "{{ odf_name }}"
     namespace: "{{ namespace_odf }}"
+    wait: yes
     wait_sleep: 10
     wait_timeout: 90
 

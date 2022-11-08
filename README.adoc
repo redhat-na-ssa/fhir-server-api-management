@@ -8,10 +8,16 @@
 
 == Overview
 
+The following components are installed using the ansible playbook included in this project: 
+
+. *RH-SSO*
+. *ODF*
+. *3scale API Manager*
+
 == Pre-reqs
 . _OpenShift_ cluster ( >= v 4.10 )
 +
-The cluster should have about 6 GBs and 6 CPUs to allocate to the resources of this quickstart.
+The cluster should have about 8 GBs and 8 CPUs to allocate to the resources of this quickstart.
 
 . link:https://mirror.openshift.com/pub/openshift-v4/clients/ocp/?C=M;O=D[oc utility]
 +
@@ -73,17 +79,9 @@ ansible [core 2.12.2]
 # python3.8 -m pip install jmespath
 -----
 
-== Identity Brokering
-Keycloak can integrate w/ 3rd party identity providers using a set of open standard protocols.  In particular, Keycloak can act as an intermediary service for authenticating and replicating users from a targeted identity provider.
+== SSO
 
-In this section of the quickstart, _github_ will be used as that targeted identity provider and the protocol used to facilitate that integration will be OpenID Connect.
-
-=== Benefits
-Through identity brokering, you can provide a much better experience for users where they can leverage an existing account to authenticate and sign up in your realm.
-
-Once these users have been created and their information has been imported from the third-party provider, they become users of your realm and can enjoy all of the features provided by Keycloak and respect the security constraints imposed by your realm.
-
-=== github OAuth App
+=== `github` Identity Brokering
 
 In this section, you will create a new OAuth client in github.
 
@@ -105,7 +103,7 @@ $ export github_client_id=<changeme>
 $ export github_client_secret=<changeme>
 -----
 
-== Provisioning
+=== Install
 
 
 . Change directories into the `ansible` folder:
@@ -117,12 +115,12 @@ $ cd ansible
 . Execute ansible playbook
 +
 -----
-$ ansible-playbook playbooks/install.yml \
+$ ansible-playbook playbooks/sso.yml \
     -e github_client_id=$github_client_id \
     -e github_client_secret=$github_client_secret
 -----
 
-== Environment Variables
+=== Environment Variables
 
 
 . Set the following environment variables with values similar to the following:
@@ -137,4 +135,37 @@ export RHSSO_MASTER_PASSWD=$(oc get secret credential-rhsso -o json -n $RHSSO_NS
 export USER_ID=user1
 export REALM_ID=$USER_ID-daybreak
 export OIDC_TOKEN_URL="$RHSSO_URL/realms/$REALM_ID/protocol/openid-connect/token"
+-----
+
+=== Uninstall
+
+-----
+$ ansible-playbook playbooks/sso.yml \
+    -e ACTION=uninstall \
+    -e undeploy_sso=true
+-----
+
+== 3scale
+
+=== Install
+. Set additional environment variables: 
++
+-----
+$ export tenant_admin_email="changeme@changeme.org"
+-----
+
+. Execute ansible playbook
++
+-----
+$ ansible-playbook playbooks/api_manager.yml
+-----
+
+=== Uninstall
+
+. Execute ansible playbook
++
+-----
+$ ansible-playbook playbooks/api_manager.yml \
+    -e ACTION=uninstall \
+    -e undeploy_api_manager=true
 -----

@@ -3,7 +3,7 @@ kind: APIManager
 metadata:
   name: apimanager
 spec:
-  wildcardDomain: apps.{{ ocp_domain }}
+  wildcardDomain: {{ ocp_domain }}
   system:
     fileStorage:
       persistentVolumeClaim:

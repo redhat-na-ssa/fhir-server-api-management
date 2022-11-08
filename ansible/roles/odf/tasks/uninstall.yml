@@ -1,13 +1,15 @@
 ---
 
-- name: "delete storagesystem custom resource"
+- name: "delete storagesystem {{ odf_name }}custom resource"
   k8s:
     state: absent
     kind: StorageSystem
     api_version: odf.openshift.io/v1alpha1
-    name: ocs-storagecluster-storagesystem
+    name: "{{ odf_name }}"
     namespace: "{{ namespace }}"
+    wait: yes
   when: undeploy_odf is defined and undeploy_odf == "true"
+
 
 - name: "delete odf operator in {{ namespace_odf }}"
   import_role:

@@ -1,0 +1,20 @@
+---
+
+- name: UnDeploy all OCP artifacts
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  run_once: true
+  vars_files:
+    - group_vars/all.yml
+  vars:
+    ACTION: uninstall
+    undeploy_sso: 'true'
+    undeploy_odf: 'true'
+    undeploy_api_manager: 'true'
+    undeploy_api_tenant:  'true'
+
+  tasks:
+  - include: tasks/api_manager.yml
+  - include: tasks/odf.yml
+  - include: tasks/sso.yml

@@ -21,18 +21,6 @@
     subscription_starting_csv: "{{ threescale_operator_subscription_starting_csv  }}"
     csv_prefix: "{{ threescale_operator_csv_prefix }}"
 
-- name: "wait until API Manager operator is active in {{ apimanager_namespace }}"
-  kubernetes.core.k8s_info:
-    kind: Deployment
-    name: "{{ threescale_operator_deployment_name }}"
-    namespace: "{{ apimanager_namespace }}"
-    wait_sleep: 10
-    wait_timeout: 360
-
-- name:  pause 10 seconds to wait for API Manager related CSVs to be registered with kubernetes
-  ansible.builtin.pause:
-    seconds: 10
-
 - name: "create API Manager custom resource"
   k8s:
     state: present
@@ -41,10 +29,11 @@
     definition: "{{ lookup('template', 'templates/'+ threescale_cr_template) | from_yaml }} "
 
 - name: "wait until threescale system-app deployment is active in {{ apimanager_namespace }}"
-  kubernetes.core.k8s_info:
-    kind: Deployment
-    name: "system-app"
-    namespace: "{{ apimanager_namespace }}"
-    wait_sleep: 10
-    wait_timeout: 90
-
+  shell: "{{ openshift_cli }} get dc system-app -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
+  vars:
+    json_template: '\{\{.status.readyReplicas\}\}'
+  register: result
+  until: result.stdout == "1"
+  retries: 10
+  delay: 30
+  changed_when: false
