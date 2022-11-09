@@ -32,8 +32,6 @@
     name: "{{ subscription_name }}"
     definition: "{{ lookup('template', 'templates/subscription.yml') | from_yaml }}"
 
-- ansible.builtin.pause:
-    seconds: 2
 - name: wait until installplan is created
   kubernetes.core.k8s_info:
     kind: InstallPlan
@@ -43,6 +41,7 @@
   retries: 30
   delay: 5
   until:
+    - r_install_plan.resources | length > 0
     - r_install_plan.resources[0] | length > 0
     - r_install_plan.resources[0] | to_json | from_json | json_query(jmesquery) | length > 0
   vars:
