@@ -61,18 +61,18 @@
     shell: |
       {{ openshift_cli }} patch installplan {{ install_plan }} --type='merge' -p '{"spec":{"approved":true}}' -n {{ subscription_namespace }}
 
-- name: "wait until csv {{ csv_name }} is active in {{ subscription_namespace }}"
-  kubernetes.core.k8s_info:
-    kind: ClusterServiceVersion
-    name: "{{ csv_name }}"
-    namespace: "{{ subscription_namespace }}"
-    api_version: operators.coreos.com/v1alpha1
-  register: r_csv
-#- debug:
-#    msg: "{{ r_csv.resources  }}"
-  retries: 30
-  delay: 5
-  until:
-    - r_csv.resources | length > 0
-    - r_csv.resources[0] | length > 0
-    - r_csv.resources[0].status.phase == "Succeeded"
+  - name: "wait until csv {{ csv_name }} is active in {{ subscription_namespace }}"
+    kubernetes.core.k8s_info:
+      kind: ClusterServiceVersion
+      name: "{{ csv_name }}"
+      namespace: "{{ subscription_namespace }}"
+      api_version: operators.coreos.com/v1alpha1
+    register: r_csv
+  #- debug:
+  #    msg: "{{ r_csv.resources  }}"
+    retries: 30
+    delay: 5
+    until:
+      - r_csv.resources | length > 0
+      - r_csv.resources[0] | length > 0
+      - r_csv.resources[0].status.phase == "Succeeded"

@@ -1,7 +1,17 @@
 ---
+# Local Storage
+namespace_ls: openshift-local-storage
+ls_operator_packagemanifest: local-storage-operator
+ls_operator_subscription_channel: stable
+ls_operator_subscription_name: local-storage-operator
+ls_operator_subscription_automatic_installplan_approval: false
+ls_operator_subscription_starting_csv: ""
+ls_operator_csv_prefix: local-storage-operator
+
+lvd_cr: localvolumediscovery.yml
+lvs_cr: localvolumeset.yml
 
 # odf operator
-odf_operator_subscription_template: subscription.yml
 odf_operator_packagemanifest: odf-operator
 odf_operator_deployment_name: noobaa-operator
 odf_operator_subscription_name: odf-operator
@@ -12,5 +22,6 @@ odf_operator_csv_prefix: odf-operator
 
 odf_cr_template: storage_cluster.yml
 odf_name: ocs-storagecluster-storagesystem
+storage_cluster_name: ocs-storagecluster
 
 undeploy_odf: false
