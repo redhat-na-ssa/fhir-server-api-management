@@ -1,0 +1,25 @@
+# sub
+# fhir-server-backend-test
+# privateBaseURL: http://fhir-server.fhir.svc.cluster.local:8080
+
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Backend
+metadata:
+  name: fhir-server-backend-test
+spec:
+  # metrics:
+  #   hits:
+  #     description: Backend of fhir-server
+  #     friendlyName: Hits
+  #     unit: hit
+  name: fhir-server-backend-test
+  privateBaseURL: http://fhir-server.fhir.svc.cluster.local:8080
+  systemName: fhir-server-backend-test
+  description: Backend of fhir-server
+
+  # {% if use_custom_tenant|bool %}
+
+  # providerAccountRef:
+  #   name: {{ tenant_access_token_secret }}
+
+  # {% endif %}

@@ -1,0 +1,12 @@
+kind: DeveloperUser
+apiVersion: capabilities.3scale.net/v1beta1
+metadata:
+  name: fhir-oidc-dev-admin
+spec:
+  developerAccountRef:
+    name: fhir-oidc-dev-account-test
+  email: fhir-oidc-dev-test@redhat.com
+  passwordCredentialsRef:
+    name: fhir-oidc-dev-account-test-secret
+  role: admin
+  username: fhir-oidc-dev-test
