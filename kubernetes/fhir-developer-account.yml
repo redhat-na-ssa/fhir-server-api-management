@@ -1,0 +1,6 @@
+kind: DeveloperAccount
+apiVersion: capabilities.3scale.net/v1beta1
+metadata:
+  name: fhir-oidc-dev-account-test
+spec:
+  orgName: fhir-oidc-dev-account-test
