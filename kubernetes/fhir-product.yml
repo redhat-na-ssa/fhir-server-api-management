@@ -90,5 +90,5 @@ spec:
   # {% endif %}
 
   # TODO
-  # Developer Audience
+  # associating application to developer account
   #promoting configuration -- promoting to stage may already be happening every time CR is updated
