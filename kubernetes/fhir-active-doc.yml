@@ -1,0 +1,14 @@
+# doesnt' work
+kind: ActiveDoc
+apiVersion: capabilities.3scale.net/v1beta1
+metadata:
+  name: activedoc-from-url
+spec:
+  #may need to use json instead
+  activeDocOpenAPIRef:
+    url: >-
+      http://fhir-server.fhir.svc.cluster.local:8080/fhir/api-docs
+  name: Operated ActiveDoc From URL
+  systemName: fhiractivedoctest
+  skipSwaggerValidations: true
+  published: true
