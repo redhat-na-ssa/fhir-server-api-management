@@ -148,7 +148,8 @@ $ ansible-playbook playbooks/sso.yml \
 == ODF
 
 === Install
-. Enable all your worker nodes to host storage:
+
+. Enable all your worker nodes as eligible to host storage:
 +
 -----
 $ worker_nodes=$(oc get node -l node-role.kubernetes.io/worker -o jsonpath='{.items[*].metadata.name}')
@@ -157,8 +158,6 @@ $ for wn in $worker_nodes
 do
   oc label node $wn cluster.ocs.openshift.io/openshift-storage='' --overwrite=true
 done
-
-# topology.rook.io/rack: rack2
 -----
 
 . Execute ansible playbook:
