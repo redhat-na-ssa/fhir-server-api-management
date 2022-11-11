@@ -17,7 +17,7 @@ The following Customer Resources (CR) are defined
 
 The following components are not working yet
 
-. `fhir-developer-account-application`: This is supposed to associate the `DeveloperAccount` with an frontend `Product` and a `Product` application plan. However, the `capabilities.3scale.net/v1beta1` `Application` CR is not yet available in 3scale 2.12
+. `fhir-developer-account-application`: This is supposed to associate the `DeveloperAccount` with a frontend `Product` and a `Product` application plan. However, the `capabilities.3scale.net/v1beta1` `Application` CR is not yet available in 3scale 2.12
 
 . `fhir-active-doc`: Active Doc to represent FHIR openapi spec. 
 
