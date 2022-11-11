@@ -17,7 +17,7 @@ The following Customer Resources (CR) are defined
 
 The following components are not working yet
 
-. `fhir-developer-account-application`: This is supposed to associate the `DeveloperAccount` with a frontend `Product` and a `Product` application plan. However, the `capabilities.3scale.net/v1beta1` `Application` CR is not yet available in 3scale 2.12
+. `fhir-developer-account-application`: This is supposed to associate the `DeveloperAccount` with a frontend `Product` and a `Product` application plan. However, the `capabilities.3scale.net/v1beta1` `Application` CR is not yet available in 3scale 2.12. The CR is defined upstream but not yet in official documentation https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.12/html-single/operating_3scale/index#provision-threescale-services-via-operator
 
 . `fhir-active-doc`: Active Doc to represent FHIR openapi spec. 
 
