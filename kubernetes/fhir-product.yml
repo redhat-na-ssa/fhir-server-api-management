@@ -90,5 +90,5 @@ spec:
   # {% endif %}
 
   # TODO
-  # associating application to developer account
+  # associating application to developer account --> may not be possible since the Application CR does not exist in 2.12
   #promoting configuration -- promoting to stage may already be happening every time CR is updated

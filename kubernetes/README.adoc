@@ -1,0 +1,23 @@
+:scrollbar:
+:data-uri:
+:toc2:
+:linkattrs:
+
+= Kubernetes Resources for installing the 3scale API Management artifacts for a FHIR Server
+:numbered:
+
+== Overview
+
+The following Customer Resources (CR) are defined
+
+. `fhir-product`: 3scale Frontend `Product` for the FHIR server, the public facing API. It also defines the application plans, mapping rules, methods and metrics, and OIDC authentication.
+. `fhir-backend`: 3scale `Backend` for the FHIR server, the internal service. It could have definied the mapping rules, and methods and metrics, but this is difined in the Product
+. `fhir-developer-account`: 3scale `DeveloperAccount`
+. `fhir-developer-user`: 3scale `DeveloperUser`. includes credentials and info for developer account. References `fhir-devuser-secret`
+
+The following components are not working yet
+
+. `fhir-developer-account-application`: This is supposed to associate the `DeveloperAccount` with an frontend `Product` and a `Product` application plan. However, the `capabilities.3scale.net/v1beta1` `Application` CR is not yet available in 3scale 2.12
+
+. `fhir-active-doc`: Active Doc to represent FHIR openapi spec. 
+

@@ -1,0 +1,18 @@
+# even though this is documented in the main branch https://github.com/3scale/3scale-operator/blob/master/doc/operator-application-capabilities.md#application-custom-resource
+# but this CR is not available on the cluster
+# also not available in the 2.12 or 2.13 docs
+# https://github.com/3scale/3scale-operator/blob/3scale-2.13-stable/doc/operator-application-capabilities.md
+# https://github.com/3scale/3scale-operator/blob/3scale-2.12-stable/doc/operator-application-capabilities.md
+
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Application
+metadata:
+  name: fhir-oidc-dev-account-test-application
+spec:
+  accountCR: 
+    name: fhir-oidc-dev-account-test
+  applicationPlanName: fhir-oidc-plan
+  productCR: 
+    name: fhir-server-test
+  name: fhir-oidc-dev-account-test-application
+  description: FHIR OIDC DEV Account Application

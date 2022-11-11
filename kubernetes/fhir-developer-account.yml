@@ -4,3 +4,7 @@ metadata:
   name: fhir-oidc-dev-account-test
 spec:
   orgName: fhir-oidc-dev-account-test
+
+#if we are enabling tenant - map to secret with tenant adminURL and token
+  # providerAccountRef:
+  #   name: mytenant

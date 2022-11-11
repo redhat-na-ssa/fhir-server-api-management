@@ -10,3 +10,6 @@ spec:
     name: fhir-oidc-dev-account-test-secret
   role: admin
   username: fhir-oidc-dev-test
+#if we are enabling tenant - map to secret with tenant adminURL and token
+  # providerAccountRef:
+  #   name: mytenant
