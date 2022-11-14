@@ -1,7 +1,8 @@
 # even though this is documented in the main branch https://github.com/3scale/3scale-operator/blob/master/doc/operator-application-capabilities.md#application-custom-resource
 # but this CR is not available on the cluster
-# also not available in the 2.12 or 2.13 docs
+# also not available in the managed, 2.12 or 2.13 docs
 # official: https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.12/html-single/operating_3scale/index#provision-threescale-services-via-operator
+# https://github.com/3scale/3scale-operator/blob/managed-services/doc/operator-application-capabilities.md
 # https://github.com/3scale/3scale-operator/blob/3scale-2.13-stable/doc/operator-application-capabilities.md
 # https://github.com/3scale/3scale-operator/blob/3scale-2.12-stable/doc/operator-application-capabilities.md
 
