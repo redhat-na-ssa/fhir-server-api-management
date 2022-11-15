@@ -1,0 +1,16 @@
+apiVersion: capabilities.3scale.net/v1alpha1
+kind: Tenant
+metadata:
+  name: fhir
+spec:
+  email: fhir@redhat.com
+  masterCredentialsRef:
+    name: system-seed
+  organizationName: fhir
+  passwordCredentialsRef:
+    name: fhir-admin-passwd-secret
+    # can this be 3scale-admin?
+  systemMasterUrl: https://master.apps.md-gh-rh-rosa-2.66u6.p1.openshiftapps.com
+  tenantSecretRef:
+    name: fhir-generated-secret
+  username: admin
