@@ -202,16 +202,16 @@ $ ansible-playbook playbooks/api_manager.yml \
 . Set additional environment variables: 
 +
 -----
-$ export tenant_admin_email="changeme@changeme.org"
-$ export developer_user_email="changeme@changeme.org"
-# change as needed
-$ export backend_url: http://fhir-server.fhir.svc.cluster.local:8080
+ export tenant_admin_email="changeme@changeme.org"
+ export developer_user_email="changeme@changeme.org"
+ # change as needed
+ export backend_url: http://fhir-server.fhir.svc.cluster.local:8080
 -----
 
 . Execute ansible playbook
 +
 -----
-$ ansible-playbook playbooks/api_tenant.yml
+ ansible-playbook playbooks/api_tenant.yml
 -----
 
 === Uninstall
@@ -219,7 +219,7 @@ $ ansible-playbook playbooks/api_tenant.yml
 . Execute ansible playbook
 +
 -----
-$ ansible-playbook playbooks/api_tenant.yml \
+ ansible-playbook playbooks/api_tenant.yml \
     -e ACTION=uninstall \
     -e undeploy_api_tenant=true
 -----
