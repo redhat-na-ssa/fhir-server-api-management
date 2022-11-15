@@ -1,0 +1,19 @@
+kind: DeveloperUser
+apiVersion: capabilities.3scale.net/v1beta1
+metadata:
+  name: {{ developer_user }}
+spec:
+  developerAccountRef:
+    name: {{ developer_account }}
+  email: {{ developer_user_email }}
+  passwordCredentialsRef:
+    name: {{ developer_account }}-secret
+  role: admin
+  username: {{ developer_user }}
+
+  {% if use_custom_tenant|bool %}
+
+  providerAccountRef:
+    name: {{ tenant_access_token_secret }}
+
+  {% endif %}

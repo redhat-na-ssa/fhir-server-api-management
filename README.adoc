@@ -3,7 +3,7 @@
 :toc2:
 :linkattrs:
 
-= Sepsis Detection Demo
+= FHIR SERVER API Management
 :numbered:
 
 == Overview
@@ -175,6 +175,9 @@ $ ansible-playbook playbooks/odf.yml
 +
 -----
 $ export tenant_admin_email="changeme@changeme.org"
+$ export developer_user_email="changeme@changeme.org"
+# change as needed
+$ export backend_url: http://fhir-server.fhir.svc.cluster.local:8080
 -----
 
 . Execute ansible playbook
@@ -191,4 +194,32 @@ $ ansible-playbook playbooks/api_manager.yml
 $ ansible-playbook playbooks/api_manager.yml \
     -e ACTION=uninstall \
     -e undeploy_api_manager=true
+-----
+
+== FHIR API Management
+
+=== Install
+. Set additional environment variables: 
++
+-----
+$ export tenant_admin_email="changeme@changeme.org"
+$ export developer_user_email="changeme@changeme.org"
+# change as needed
+$ export backend_url: http://fhir-server.fhir.svc.cluster.local:8080
+-----
+
+. Execute ansible playbook
++
+-----
+$ ansible-playbook playbooks/api_tenant.yml
+-----
+
+=== Uninstall
+
+. Execute ansible playbook
++
+-----
+$ ansible-playbook playbooks/api_tenant.yml \
+    -e ACTION=uninstall \
+    -e undeploy_api_tenant=true
 -----

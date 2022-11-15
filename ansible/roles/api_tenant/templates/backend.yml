@@ -4,9 +4,9 @@ metadata:
   name: {{ backend_name }}
 spec:
   name: {{ backend_name }}
-  privateBaseURL: {{ frontend_url }}
+  privateBaseURL: {{ backend_url }}
   systemName: {{ backend_name }}
-  description: Backend of {{ backend_name }}
+  description: "Backend of {{ app_name }}"
 
   {% if use_custom_tenant|bool %}
 

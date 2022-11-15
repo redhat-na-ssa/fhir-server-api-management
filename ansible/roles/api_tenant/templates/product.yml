@@ -32,9 +32,10 @@ spec:
       increment: 1
       metricMethodRef: put    
   deployment:
-    apicastSelfManaged:
-      stagingPublicBaseURL: {{ api_gw_url }}
-      productionPublicBaseURL: {{ api_gw_url }}
+    # commenting out for now until we decide - this has to work for self-managed & managed 3scale
+    # apicastSelfManaged:
+    #   stagingPublicBaseURL: {{ api_gw_url }}
+    #   productionPublicBaseURL: {{ api_gw_url }}
       authentication:
         oidc:
           issuerEndpoint: {{ sso_confidential_realm_url }}
@@ -46,7 +47,7 @@ spec:
             serviceAccountsEnabled: false
             directAccessGrantsEnabled: false
   backendUsages:
-    {{ backend_name }}:
+     {{ backend_name }}:
       path: /
   applicationPlans:
     {{ app_plan_name }}:

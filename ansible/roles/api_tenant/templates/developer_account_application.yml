@@ -1,0 +1,19 @@
+apiVersion: capabilities.3scale.net/v1beta1
+kind: Application
+metadata:
+  name: {{ developer_account_application }}
+spec:
+  accountCR: 
+    name: {{ developer_account_application }}
+  applicationPlanName: {{ app_plan_name }}
+  productCR: 
+    name: {{ api_product_name }}
+  name: {{ developer_account_application }}
+  description: {{ developer_account }} {{ api_product_name }} Application
+
+  {% if use_custom_tenant|bool %}
+
+  providerAccountRef:
+    name: {{ tenant_access_token_secret }}
+
+  {% endif %}

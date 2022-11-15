@@ -2,7 +2,7 @@
 
 
 # #######     tenant    #############
-tenant_name: adprod2
+tenant_name: fhir
 use_custom_tenant: true
 delete_tenant: false
 
@@ -15,8 +15,6 @@ tenant_id: 0
 
 
 
-backend_name: "{{ tenant_name }}-quarkus-backend"
-
-api_product_name: "{{ tenant_name }}-quarkus-product"
-app_plan_name: "{{ tenant_name }}-quarkus-app-plan"
+app_name: fhir-server
+app_plan_name: "{{ tenant_name }}-{{ app_name }}-app-plan"
 

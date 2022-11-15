@@ -1,4 +1,35 @@
 ---
+- name: "delete developer secret {{ developer_account }}-secret"
+  k8s:
+    state: absent
+    name: "{{ developer_account }}-secret"
+    namespace: "{{ apimanager_namespace }}"
+    kind: Secret
+
+- name: "delete developer account {{ developer_account }}"
+  k8s:
+    state: absent
+    name: "{{ developer_account }}"
+    namespace: "{{ apimanager_namespace }}"
+    kind: DeveloperAccount
+
+- name: "delete developer user {{ developer_user }}"
+  k8s:
+    state: absent
+    name: "{{ developer_user }}"
+    namespace: "{{ apimanager_namespace }}"
+    kind: DeveloperUser
+
+# - name: "delete developer account application {{ developer_account_application }}"
+#   k8s:
+#     state: absent
+#     name: "{{ developer_account_application }}"
+#     namespace: "{{ apimanager_namespace }}"
+#     kind: Application
+
+#TODO 
+# remove application via REST API
+#remove active docs
 
 - name: "delete product {{ api_product_name }}"
   k8s:

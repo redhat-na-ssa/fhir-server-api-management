@@ -8,7 +8,7 @@ spec:
     name: system-seed
   organizationName: fhir
   passwordCredentialsRef:
-    name: fhir-admin-passwd-secret
+    name: fhir-tenant-admin-passwd-secret
     # can this be 3scale-admin?
   systemMasterUrl: https://master.apps.md-gh-rh-rosa-2.66u6.p1.openshiftapps.com
   tenantSecretRef:

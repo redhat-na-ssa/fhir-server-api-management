@@ -15,6 +15,7 @@
     undeploy_api_tenant:  'true'
 
   tasks:
+  - include: tasks/api_tenant.yml
   - include: tasks/api_manager.yml
   - include: tasks/odf.yml
   - include: tasks/sso.yml
