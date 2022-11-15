@@ -175,9 +175,6 @@ $ ansible-playbook playbooks/odf.yml
 +
 -----
 $ export tenant_admin_email="changeme@changeme.org"
-$ export developer_user_email="changeme@changeme.org"
-# change as needed
-$ export backend_url: http://fhir-server.fhir.svc.cluster.local:8080
 -----
 
 . Execute ansible playbook
@@ -205,13 +202,16 @@ $ ansible-playbook playbooks/api_manager.yml \
  export tenant_admin_email="changeme@changeme.org"
  export developer_user_email="changeme@changeme.org"
  # change as needed
- export backend_url: http://fhir-server.fhir.svc.cluster.local:8080
+ export backend_url=http://fhir-server.fhir.svc.cluster.local:8080
 -----
 
 . Execute ansible playbook
 +
 -----
- ansible-playbook playbooks/api_tenant.yml
+ ansible-playbook playbooks/api_tenant.yml \
+   -e backend_url=$backend_url \
+   -e developer_user_email=$developer_user_email \
+   -e tenant_admin_email=$tenant_admin_email
 -----
 
 === Uninstall
