@@ -137,7 +137,8 @@
     namespace: "{{ apimanager_namespace }}"
     definition: "{{ lookup('template', 'templates/developer_user.yml' ) | from_yaml }}"
 
-
+# The CRs are still tech preview as of Nov 2022, so there are some limitations with deleting certain resources
+#https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.12/html/operating_3scale/provision-threescale-services-via-operator#limitations-capabilities
 - name: "wait until {{ developer_user }} developer_user is up and running"
   shell: "{{ openshift_cli }} get developeruser {{ developer_user }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
   vars:

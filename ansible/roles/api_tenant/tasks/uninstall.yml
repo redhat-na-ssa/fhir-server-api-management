@@ -1,4 +1,13 @@
 ---
+
+- name: set threescale facts
+  set_fact:
+    backend_name: "{{ app_name }}-backend"
+    api_product_name: "{{ app_name }}"
+    developer_user: "{{ app_name }}-developer-user"
+    developer_account: "{{ app_name }}-developer-account"
+   # developer_account_application : "{{ developer_account }}-application"
+
 - name: "delete developer secret {{ developer_account }}-secret"
   k8s:
     state: absent
@@ -9,9 +18,10 @@
 - name: "delete developer account {{ developer_account }}"
   k8s:
     state: absent
+    kind: DeveloperAccount
+    api_version: capabilities.3scale.net/v1beta1
     name: "{{ developer_account }}"
     namespace: "{{ apimanager_namespace }}"
-    kind: DeveloperAccount
 
 - name: "delete developer user {{ developer_user }}"
   k8s:
@@ -19,6 +29,7 @@
     name: "{{ developer_user }}"
     namespace: "{{ apimanager_namespace }}"
     kind: DeveloperUser
+    api_version: capabilities.3scale.net/v1beta1
 
 # - name: "delete developer account application {{ developer_account_application }}"
 #   k8s:
@@ -37,6 +48,7 @@
     name: "{{ api_product_name }}"
     namespace: "{{ apimanager_namespace }}"
     kind: Product
+    api_version: capabilities.3scale.net/v1beta1
 
 
 - name: "Delete backend {{ backend_name }}"
@@ -45,6 +57,7 @@
     name: "{{ backend_name }}"
     namespace: "{{ apimanager_namespace }}"
     kind: Backend
+    api_version: capabilities.3scale.net/v1beta1
 
 
 - name: "delete tenant {{ tenant_name }}"
@@ -53,6 +66,7 @@
     name: "{{ tenant_name }}"
     namespace: "{{ apimanager_namespace }}"
     kind: Tenant
+    api_version: capabilities.3scale.net/v1alpha1
   when: undeploy_api_tenant is defined and undeploy_api_tenant == "true"
 
 
