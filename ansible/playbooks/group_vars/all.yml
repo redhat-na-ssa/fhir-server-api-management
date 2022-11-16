@@ -49,5 +49,4 @@ namespace_odf: openshift-storage
 apimanager_namespace: redhat-rhoam-3scale
 apigw_namespace: "{{ project_name }}"
 apigw_hostname_subcontext: "gw-{{ apigw_namespace }}"
-
 ########################################

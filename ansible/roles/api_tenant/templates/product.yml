@@ -5,26 +5,72 @@ metadata:
 spec:
   name: {{ api_product_name }}
   systemName: {{ api_product_name }}
+  methods:
+    get:
+      friendlyName: GET
+    post:
+      friendlyName: POST
+    delete:
+      friendlyName: DELETE
+    put:
+      friendlyName: PUT
+  mappingRules:
+    - httpMethod: GET
+      pattern: "/"
+      increment: 1
+      metricMethodRef: get
+    - httpMethod: POST
+      pattern: "/"
+      increment: 1
+      metricMethodRef: post      
+    - httpMethod: DELETE
+      pattern: "/"
+      increment: 1
+      metricMethodRef: delete
+    - httpMethod: PUT
+      pattern: "/"
+      increment: 1
+      metricMethodRef: put    
   deployment:
-    apicastSelfManaged:
-      stagingPublicBaseURL: {{ api_gw_url }}
-      productionPublicBaseURL: {{ api_gw_url }}
+    # commenting out for now until we decide - this has to work for self-managed & managed 3scale
+    # apicastSelfManaged:
+    #   stagingPublicBaseURL: {{ api_gw_url }}
+    #   productionPublicBaseURL: {{ api_gw_url }}
+     apicastHosted: 
       authentication:
         oidc:
           issuerEndpoint: {{ sso_confidential_realm_url }}
           issuerType: keycloak
+          credentials: headers
           authenticationFlow:
             standardFlowEnabled: true
             implicitFlowEnabled: false
             serviceAccountsEnabled: false
-            directAccessGrantsEnabled: true
+            directAccessGrantsEnabled: false
   backendUsages:
-    {{ backend_name }}:
-      path: /frontend
+     {{ backend_name }}:
+      path: /
   applicationPlans:
     {{ app_plan_name }}:
       appsRequireApproval: false
+      published: true
   policies:
+  - configuration:
+      allow_headers:
+      - authorization
+      - content-type
+      - x-requested-with
+      allow_credentials: true
+      allow_methods:
+      - GET
+      - OPTIONS
+      - POST
+      - DELETE
+      - PUT
+      allow_origin: "*"
+    enabled: true
+    name: cors
+    version: builtin  
   - configuration: {}
     enabled: true
     name: apicast
@@ -36,5 +82,3 @@ spec:
     name: {{ tenant_access_token_secret }}
 
   {% endif %}
-
-    

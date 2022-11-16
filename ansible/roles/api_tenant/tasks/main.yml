@@ -3,8 +3,14 @@
 - name: set threescale facts
   set_fact:
     api_gw_url: "https://{{ apigw_hostname_subcontext }}.{{ ocp_domain }}"
-    sso_confidential_realm_url: "https://zyncsso:{{ zync_sso_client_secret }}@sso-{{ namespace_sso }}.{{ ocp_domain }}"
-
+    # can we make this conditional
+    sso_confidential_realm_url: "https://zyncsso:{{ zync_sso_client_secret }}@{{ sso_prefix }}.{{ ocp_domain }}/auth/realms/{{ sso_realm_id }}"
+    backend_name: "{{ app_name }}-backend"
+    api_product_name: "{{ app_name }}"
+    developer_user: "{{ app_name }}-developer-user"
+    developer_account: "{{ app_name }}-developer-account"
+   # developer_account_application : "{{ developer_account }}-application"
+    
 ########    Tenant    #############
 
 - name: "Determine if {{ tenant_name }} tenant exists"
@@ -65,7 +71,7 @@
 
 
 ########    backend    #############
-- name: "create backend {{ backend_name }}"
+- name: "create backend {{ backend_name }} with url {{ backend_url }} "
   k8s:
     state: present
     namespace: "{{ apimanager_namespace }}"
@@ -102,3 +108,75 @@
   changed_when: false
 
 ###################################
+
+
+##### developer secret, user and account ######
+- name: "developer user secret {{ developer_account }}-secret"
+  k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "{{ developer_account }}-secret"
+        namespace: "{{ apimanager_namespace }}"
+        type: Opaque
+      data:
+       password: "{{ 'password' | b64encode }}"
+
+- name: "create developer account {{ developer_account }}"
+  k8s:
+    state: present
+    namespace: "{{ apimanager_namespace }}"
+    definition: "{{ lookup('template', 'templates/developer_account.yml' ) | from_yaml }}"
+
+- name: "create developer user {{ developer_user }}"
+  k8s:
+    state: present
+    namespace: "{{ apimanager_namespace }}"
+    definition: "{{ lookup('template', 'templates/developer_user.yml' ) | from_yaml }}"
+
+
+- name: "wait until {{ developer_user }} developer_user is up and running"
+  shell: "{{ openshift_cli }} get developeruser {{ developer_user }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
+  vars:
+    # fix
+    json_template: '\{\{.status.developerUserID\}\}'
+  register: result
+  until: result.stdout | int >= 1
+  retries: 10
+  delay: 10
+  changed_when: false
+#######################################
+
+
+####### active Docs ####################
+# TODO - use CR or 3scale toolbox
+# https://gist.github.com/gbengataylor/b9330056d71ec193c580f6cc7616d2b5
+###################################
+
+
+
+##### application ######
+# TODO - use REST API 
+
+
+## comment out until Application CR is available #####
+# - name: "create developer_account_application {{ developer_account_application }}"
+#   k8s:
+#     state: present
+#     namespace: "{{ apimanager_namespace }}"
+#     definition: "{{ lookup('template', 'templates/developer_account_application.yml' ) | from_yaml }}"
+
+# - name: "wait until {{ developer_account_application }} application is up and running"
+#   shell: "{{ openshift_cli }} get Application {{ developer_account_application }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
+#   vars:
+#     json_template: '\{\{.status.productId\}\}' # fix
+#   register: result
+#   until: result.stdout | int >= 1
+#   retries: 10
+#   delay: 10
+#   changed_when: false
+
+#####################

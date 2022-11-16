@@ -3,7 +3,7 @@
 :toc2:
 :linkattrs:
 
-= Sepsis Detection Demo
+= FHIR SERVER API Management
 :numbered:
 
 == Overview
@@ -191,4 +191,46 @@ $ ansible-playbook playbooks/api_manager.yml
 $ ansible-playbook playbooks/api_manager.yml \
     -e ACTION=uninstall \
     -e undeploy_api_manager=true
+-----
+
+== FHIR API Management
+
+=== Install
+. Set additional environment variables: 
++
+-----
+ export tenant_admin_email="changeme@changeme.org"
+ export developer_user_email="changeme@changeme.org"
+ # change as needed
+ export backend_url=http://fhir-server.fhir.svc.cluster.local:8080
+
+ #TODO get RHSSO URL - if it's installed with this repo, can pull down value. if RHOAM SSO, different
+ # set
+ export sso_prefix=keycloak-redhat-rhoam-user-sso
+
+ #if realm id is different from sso install above
+ # should we decouple sso realm from sso install?
+ sso_realm_id=
+
+-----
+
+. Execute ansible playbook
++
+-----
+ ansible-playbook playbooks/api_tenant.yml \
+   -e backend_url=$backend_url \
+   -e developer_user_email=$developer_user_email \
+   -e tenant_admin_email=$tenant_admin_email \
+   -e sso_prefix=$sso_prefix \
+   -e sso_realm_id=$sso_realm_id
+-----
+
+=== Uninstall
+
+. Execute ansible playbook
++
+-----
+ ansible-playbook playbooks/api_tenant.yml \
+    -e ACTION=uninstall \
+    -e undeploy_api_tenant=true
 -----

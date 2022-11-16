@@ -1,0 +1,13 @@
+kind: DeveloperAccount
+apiVersion: capabilities.3scale.net/v1beta1
+metadata:
+  name: {{ developer_account }}
+spec:
+  orgName: {{ developer_account }}
+
+  {% if use_custom_tenant|bool %}
+
+  providerAccountRef:
+    name: {{ tenant_access_token_secret }}
+
+  {% endif %}
