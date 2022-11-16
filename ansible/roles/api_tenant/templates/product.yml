@@ -36,6 +36,7 @@ spec:
     # apicastSelfManaged:
     #   stagingPublicBaseURL: {{ api_gw_url }}
     #   productionPublicBaseURL: {{ api_gw_url }}
+     apicastHosted: 
       authentication:
         oidc:
           issuerEndpoint: {{ sso_confidential_realm_url }}

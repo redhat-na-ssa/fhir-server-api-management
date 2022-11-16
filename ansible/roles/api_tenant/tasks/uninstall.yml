@@ -53,7 +53,8 @@
     name: "{{ tenant_name }}"
     namespace: "{{ apimanager_namespace }}"
     kind: Tenant
-  when: delete_tenant|bool == true
+  when: undeploy_api_tenant is defined and undeploy_api_tenant == "true"
+
 
 - name: "delete tenant secret {{ tenant_name }}-admin-passwd-secret"
   k8s:
@@ -61,7 +62,7 @@
     name: "{{ tenant_name }}-admin-passwd-secret"
     namespace: "{{ apimanager_namespace }}"
     kind: Secret
-  when: delete_tenant|bool == true
+  when: undeploy_api_tenant is defined and undeploy_api_tenant == "true"
 
 - name: "delete tenant secret {{ tenant_name }}-generated-secret"
   k8s:
@@ -69,7 +70,7 @@
     name: "{{ tenant_name }}-generated-secret"
     namespace: "{{ apimanager_namespace }}"
     kind: Secret
-  when: delete_tenant|bool == true
+  when: undeploy_api_tenant is defined and undeploy_api_tenant == "true"
 
 - name: "delete tenant secret {{ tenant_access_token_secret }}"
   k8s:
@@ -77,4 +78,4 @@
     name: "{{ tenant_access_token_secret }}"
     namespace: "{{ apimanager_namespace }}"
     kind: Secret
-  when: delete_tenant|bool == true
+  when: undeploy_api_tenant is defined and undeploy_api_tenant == "true"

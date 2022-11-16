@@ -3,12 +3,13 @@
 - name: set threescale facts
   set_fact:
     api_gw_url: "https://{{ apigw_hostname_subcontext }}.{{ ocp_domain }}"
-    sso_confidential_realm_url: "https://zyncsso:{{ zync_sso_client_secret }}@sso-{{ namespace_sso }}.{{ ocp_domain }}"
+    # can we make this conditional
+    sso_confidential_realm_url: "https://zyncsso:{{ zync_sso_client_secret }}@{{ sso_prefix }}.{{ ocp_domain }}/auth/realms/{{ sso_realm_id }}"
     backend_name: "{{ app_name }}-backend"
     api_product_name: "{{ app_name }}"
     developer_user: "{{ app_name }}-developer-user"
     developer_account: "{{ app_name }}-developer-account"
-    developer_account_application : "{{ developer_account }}-application"
+   # developer_account_application : "{{ developer_account }}-application"
     
 ########    Tenant    #############
 
@@ -119,6 +120,7 @@
       type: Opaque
       metadata:
         name: "{{ developer_account }}-secret"
+        namespace: "{{ apimanager_namespace }}"
         type: Opaque
       data:
        password: "{{ 'password' | b64encode }}"
@@ -140,7 +142,7 @@
   shell: "{{ openshift_cli }} get developeruser {{ developer_user }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
   vars:
     # fix
-    json_template: '\{\{.status.productId\}\}'
+    json_template: '\{\{.status.developerUserID\}\}'
   register: result
   until: result.stdout | int >= 1
   retries: 10
