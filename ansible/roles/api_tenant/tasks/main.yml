@@ -1,10 +1,14 @@
 ---
 
+- name: retrieve sso route
+  shell: "{{ openshift_cli }} get route sso -o jsonpath='{.spec.host}' -n {{ namespace_sso }}"
+  register: sso_route_cmd
+
 - name: set threescale facts
   set_fact:
     api_gw_url: "https://{{ apigw_hostname_subcontext }}.{{ ocp_domain }}"
     # can we make this conditional
-    sso_confidential_realm_url: "https://zyncsso:{{ zync_sso_client_secret }}@{{ sso_prefix }}.{{ ocp_domain }}/auth/realms/{{ sso_realm_id }}"
+    sso_confidential_realm_url: "https://zyncsso:{{ zync_sso_client_secret }}@{{ sso_route_cmd.stdout }}/auth/realms/{{ sso_realm_id }}"
     backend_name: "{{ app_name }}-backend"
     api_product_name: "{{ app_name }}"
     developer_user: "{{ app_name }}-developer-user"
@@ -13,7 +17,7 @@
     
 ########    Tenant    #############
 
-- name: "Determine if {{ tenant_name }} tenant exists"
+- name: "Determine if {{ tenant_name }} tenant exists in {{ apimanager_namespace }}"
   kubernetes.core.k8s_info:
     kind: Tenant
     namespace: "{{ apimanager_namespace }}"
@@ -33,7 +37,7 @@
 
 - block:
 
-  - name: "tenant secret {{ tenant_name }}-admin-passwd-secret with tenant password"
+  - name: "tenant secret {{ tenant_name }}-admin-passwd-secret with tenant password in {{ apimanager_namespace }}"
     k8s:
       state: present
       definition:
@@ -46,13 +50,13 @@
         data:
           admin_password: "{{ 'admin' | b64encode }}"
   
-  - name: "create tenant {{ tenant_name }}"
+  - name: "create tenant {{ tenant_name }} in {{ apimanager_namespace }}"
     k8s:
       state: present
       namespace: "{{ apimanager_namespace }}"
       definition: "{{ lookup('template', 'templates/tenant.yml' ) | from_yaml }}"
 
-  - name: "wait until {{ tenant_name }} tenant is up and running"
+  - name: "wait until {{ tenant_name }} tenant is up and running in {{ apimanager_namespace }}"
     shell: "{{ openshift_cli }} get tenant {{ tenant_name }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
     vars:
       json_template: '\{\{.status.tenantId\}\}'
@@ -71,13 +75,13 @@
 
 
 ########    backend    #############
-- name: "create backend {{ backend_name }} with url {{ backend_url }} "
+- name: "create backend {{ backend_name }} with url {{ backend_url }} in {{ apimanager_namespace }}"
   k8s:
     state: present
     namespace: "{{ apimanager_namespace }}"
     definition: "{{ lookup('template', 'templates/backend.yml' ) | from_yaml }}"
 
-- name: "wait until {{ backend_name }} backend is up and running"
+- name: "wait until {{ backend_name }} backend is up and running {{ apimanager_namespace }}"
   shell: "{{ openshift_cli }} get backend {{ backend_name }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
   vars:
     json_template: '\{\{.status.backendId\}\}'
@@ -91,13 +95,13 @@
 
 
 ########    product    #############
-- name: "create product {{ api_product_name }}"
+- name: "create product {{ api_product_name }} in {{ apimanager_namespace }}"
   k8s:
     state: present
     namespace: "{{ apimanager_namespace }}"
     definition: "{{ lookup('template', 'templates/product.yml' ) | from_yaml }}"
 
-- name: "wait until {{ api_product_name }} product is up and running"
+- name: "wait until {{ api_product_name }} product is up and running in {{ apimanager_namespace }}"
   shell: "{{ openshift_cli }} get product {{ api_product_name }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
   vars:
     json_template: '\{\{.status.productId\}\}'
@@ -111,7 +115,7 @@
 
 
 ##### developer secret, user and account ######
-- name: "developer user secret {{ developer_account }}-secret"
+- name: "developer user secret {{ developer_account }}-secret in {{ apimanager_namespace }}"
   k8s:
     state: present
     definition:
@@ -125,13 +129,13 @@
       data:
        password: "{{ 'password' | b64encode }}"
 
-- name: "create developer account {{ developer_account }}"
+- name: "create developer account {{ developer_account }} in {{ apimanager_namespace }}"
   k8s:
     state: present
     namespace: "{{ apimanager_namespace }}"
     definition: "{{ lookup('template', 'templates/developer_account.yml' ) | from_yaml }}"
 
-- name: "create developer user {{ developer_user }}"
+- name: "create developer user {{ developer_user }} in {{ apimanager_namespace }}"
   k8s:
     state: present
     namespace: "{{ apimanager_namespace }}"
@@ -139,7 +143,7 @@
 
 # The CRs are still tech preview as of Nov 2022, so there are some limitations with deleting certain resources
 #https://access.redhat.com/documentation/en-us/red_hat_3scale_api_management/2.12/html/operating_3scale/provision-threescale-services-via-operator#limitations-capabilities
-- name: "wait until {{ developer_user }} developer_user is up and running"
+- name: "wait until {{ developer_user }} developer_user is up and running in {{ apimanager_namespace }}"
   shell: "{{ openshift_cli }} get developeruser {{ developer_user }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
   vars:
     # fix
@@ -164,13 +168,13 @@
 
 
 ## comment out until Application CR is available #####
-# - name: "create developer_account_application {{ developer_account_application }}"
+# - name: "create developer_account_application {{ developer_account_application }} in {{ apimanager_namespace }}"
 #   k8s:
 #     state: present
 #     namespace: "{{ apimanager_namespace }}"
 #     definition: "{{ lookup('template', 'templates/developer_account_application.yml' ) | from_yaml }}"
 
-# - name: "wait until {{ developer_account_application }} application is up and running"
+# - name: "wait until {{ developer_account_application }} application is up and running in {{ apimanager_namespace }}"
 #   shell: "{{ openshift_cli }} get Application {{ developer_account_application }} -o template --template={{ json_template }} -n {{ apimanager_namespace }}"
 #   vars:
 #     json_template: '\{\{.status.productId\}\}' # fix

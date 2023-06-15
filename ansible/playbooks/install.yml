@@ -12,6 +12,6 @@
 
   tasks:
   - include: tasks/sso.yml
-  - include: tasks/odf.yml
-  - include: tasks/api_manager.yml
+#  - include: tasks/odf.yml
+#  - include: tasks/api_manager.yml
   - include: tasks/api_tenant.yml

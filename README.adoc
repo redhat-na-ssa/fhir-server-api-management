@@ -25,17 +25,33 @@ Needs to correspond to the version of your OpenShift cluster.
 +
 You should be authenticated into your OpenShift cluster at the command line as a `cluster-admin` user.
 
-. *ansible*
+. *ansible* installed locally
 +
-Installed locally with the following collections:
+ie: dnf install ansible
 
-.. link:https://docs.ansible.com/ansible/latest/collections/kubernetes/core/index.html[kubernetes]
+.. On the host machine that will run the ansible, ensure that both `kubernetes` and `jmespath` ansible galaxy collections are installed for the version of python using by ansible:
 
-... Install: 
+... Check version of python used by ansible:
 +
 -----
-$ ansible-galaxy collection install kubernetes.core
+$ ansible --version
+
+
+ansible [core 2.12.2]
+  ...
+
+  python version = 3.8.12 (default, Sep 16 2021, 10:46:05) [GCC 8.5.0 20210514 (Red Hat 8.5.0-3)]
+
+  ...
+
 -----
+
+... Install dependencies as root user:
++
+-----
+# python3.8 -m pip install kubernetes jmespath
+-----
+
 
 ... Test:
 +
@@ -105,19 +121,13 @@ $ export github_client_secret=<changeme>
 
 === Install
 
-
-. Change directories into the `ansible` folder:
-+
------
-$ cd ansible
------
-
 . Execute ansible playbook
 +
 -----
-$ ansible-playbook playbooks/sso.yml \
-    -e github_client_id=$github_client_id \
-    -e github_client_secret=$github_client_secret
+$ ( cd ansible; \
+      ansible-playbook playbooks/sso.yml \
+      -e github_client_id=$github_client_id \
+      -e github_client_secret=$github_client_secret )
 -----
 
 === Environment Variables
@@ -133,16 +143,17 @@ export RHSSO_URL=https://$RHSSO_HOST/auth
 export RHSSO_MASTER_PASSWD=$(oc get secret credential-rhsso -o json -n $RHSSO_NS | jq -r .data.ADMIN_PASSWORD | base64 -d)
 
 export USER_ID=user1
-export REALM_ID=$USER_ID-daybreak
+export REALM_ID=$USER_ID-fhir
 export OIDC_TOKEN_URL="$RHSSO_URL/realms/$REALM_ID/protocol/openid-connect/token"
 -----
 
 === Uninstall
 
 -----
-$ ansible-playbook playbooks/sso.yml \
+$ (cd ansible; \
+     ansible-playbook playbooks/sso.yml \
     -e ACTION=uninstall \
-    -e undeploy_sso=true
+    -e undeploy_sso=true )
 -----
 
 == ODF
@@ -163,7 +174,7 @@ done
 . Execute ansible playbook:
 +
 -----
-$ ansible-playbook playbooks/odf.yml
+$ ( cd ansible; ansible-playbook playbooks/odf.yml )
 -----
 
 === UnInstall
@@ -180,7 +191,8 @@ $ export tenant_admin_email="changeme@changeme.org"
 . Execute ansible playbook
 +
 -----
-$ ansible-playbook playbooks/api_manager.yml
+$ ( cd ansible; \
+      ansible-playbook playbooks/api_manager.yml )
 -----
 
 === Uninstall
@@ -188,9 +200,10 @@ $ ansible-playbook playbooks/api_manager.yml
 . Execute ansible playbook
 +
 -----
-$ ansible-playbook playbooks/api_manager.yml \
+$ ( cd ansible; \
+    ansible-playbook playbooks/api_manager.yml \
     -e ACTION=uninstall \
-    -e undeploy_api_manager=true
+    -e undeploy_api_manager=true )
 -----
 
 == FHIR API Management
@@ -204,25 +217,16 @@ $ ansible-playbook playbooks/api_manager.yml \
  # change as needed
  export backend_url=http://fhir-server.fhir.svc.cluster.local:8080
 
- #TODO get RHSSO URL - if it's installed with this repo, can pull down value. if RHOAM SSO, different
- # set
- export sso_prefix=keycloak-redhat-rhoam-user-sso
-
- #if realm id is different from sso install above
- # should we decouple sso realm from sso install?
- sso_realm_id=
-
 -----
 
 . Execute ansible playbook
 +
 -----
- ansible-playbook playbooks/api_tenant.yml \
-   -e backend_url=$backend_url \
-   -e developer_user_email=$developer_user_email \
-   -e tenant_admin_email=$tenant_admin_email \
-   -e sso_prefix=$sso_prefix \
-   -e sso_realm_id=$sso_realm_id
+$ ( cd ansible; \
+     ansible-playbook playbooks/api_tenant.yml \
+     -e backend_url=$backend_url \
+     -e developer_user_email=$developer_user_email \
+     -e tenant_admin_email=$tenant_admin_email )
 -----
 
 === Uninstall

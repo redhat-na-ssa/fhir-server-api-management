@@ -21,9 +21,9 @@ project_annotations:
 ##############      SSO   #######################
 
 # Namespace where SSO will be installed
-namespace_sso: redhat-rhoam-rhsso
+namespace_sso: "redhat-rhoam-rhsso"
 
-sso_realm_id: "{{ project_admin }}-daybreak"
+sso_realm_id: "{{ project_admin }}-fhir"
 
 zync_sso_client_secret: 21b503a3-0b50-4e17-8ef7-167ab973c171
 

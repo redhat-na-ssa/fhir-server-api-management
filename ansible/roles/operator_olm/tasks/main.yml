@@ -1,5 +1,10 @@
 ---
 
+# Purpose of this ansible role is to automate the installation of an operator in Openshift
+# For community operators, the equivalent could be done manually by selecting & installing an operator from https://operatorhub.io
+#   NOTE: operatorhub.io maintains a populated Subscription.operators.coreos.com for each operator
+#         oc apply -f <subscription file> is executed to deploy the operator
+
 - name: "get packagemanifest for {{ operator_name }} operator"
   kubernetes.core.k8s_info:
     kind: packagemanifest
@@ -7,8 +12,11 @@
     name: "{{ packagemanifest }}"
     api_version: packages.operators.coreos.com/v1
   register: r_packagemanifest
+- fail:
+    msg: "PROBLEM: no packagemanifests in openshift-marketplace namespace! "
+  when: r_packagemanifest.resources[0] is not defined 
 #- debug:
-#    msg: "{{ r_packagemanifest.resources[0] }}"
+#    msg: "{{ r_packagemanifest.resources[] }}"
 
 - name: "set facts for {{ operator_name }} operator"
   set_fact:
@@ -32,31 +40,49 @@
     name: "{{ subscription_name }}"
     definition: "{{ lookup('template', 'templates/subscription.yml') | from_yaml }}"
 
-- name: wait until installplan is created
+
+- name: "wait until installplan with prefix {{ csv_prefix }} is created in {{ subscription_namespace }}"
   kubernetes.core.k8s_info:
     kind: InstallPlan
     namespace: "{{ subscription_namespace }}"
     api_version: operators.coreos.com/v1alpha1
   register: r_install_plan
-  retries: 30
+  retries: 20
   delay: 5
   until:
     - r_install_plan.resources | length > 0
-    - r_install_plan.resources[0] | length > 0
-    - r_install_plan.resources[0] | to_json | from_json | json_query(jmesquery) | length > 0
+    - r_install_plan.resources | length > 0
+    - r_install_plan.resources | to_json | from_json | json_query(iplanquery) | d(False)
   vars:
-    jmesquery: "spec.clusterServiceVersionNames | [?contains(@, '{{ csv_prefix }}') == `true`]"
+    iplanquery: "[?contains(spec.clusterServiceVersionNames[0], '{{ csv_prefix }}')] | [0].metadata.name"
 
-- name: "set install plan name"
-  set_fact:
-    install_plan: "{{ r_install_plan.resources[0].metadata.name }}"
-    csv_name: "{{ r_install_plan.resources[0] | to_json | from_json | json_query(jmesquery) }}"
+- name: "debug install plans"
+  kubernetes.core.k8s_info:
+    kind: InstallPlan
+    namespace: "{{ subscription_namespace }}"
+    api_version: operators.coreos.com/v1alpha1
+  register: d_install_plans
+#- name: "Copy list of installplans to /tmp/iplans.json"
+#  copy:
+#    content: "{{ d_install_plans.resources | to_json | from_json }}" 
+#    dest: /tmp/iplans.json
+
+
+- set_fact:
+    installplan: "{{ d_install_plans.resources | to_json | from_json | json_query(iplanquery) }}"
   vars:
-    jmesquery: "spec.clusterServiceVersionNames[?contains(@, '{{ csv_prefix }}')] | [0]"
+    iplanquery: "[?contains(spec.clusterServiceVersionNames[0], '{{ csv_prefix }}')] | [0]"
+#- copy:
+#    content: "{{ installplan }}" 
+#    dest: /tmp/iplan.json
 
-- name: "approve installplan {{ install_plan }}"
+- set_fact:
+    install_plan_name: "{{ installplan.metadata.name }}"
+    csv_name: "{{ installplan.spec.clusterServiceVersionNames[0] }}"
+
+- name: "approve installplan {{ install_plan_name }}"
   shell: |
-    {{ openshift_cli }} patch installplan {{ install_plan }} --type='merge' -p '{"spec":{"approved":true}}' -n {{ subscription_namespace }}
+    {{ openshift_cli }} patch installplan {{ install_plan_name }} --type='merge' -p '{"spec":{"approved":true}}' -n {{ subscription_namespace }}
   when: not automatic_installplan_approval
 
 - name: "wait until csv {{ csv_name }} is active in {{ subscription_namespace }}"
@@ -71,4 +97,5 @@
   until:
     - r_csv.resources | length > 0
     - r_csv.resources[0] | length > 0
+    - r_csv.resources[0].status is defined
     - r_csv.resources[0].status.phase == "Succeeded"

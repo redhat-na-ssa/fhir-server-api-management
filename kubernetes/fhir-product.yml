@@ -46,7 +46,7 @@ spec:
     #   productionPublicBaseURL: https://fhir-fhir-server-3scale-apicast-production.apps.md-gh-rh-rosa-2.66u6.p1.openshiftapps.com:443
       authentication:
         oidc:
-          issuerEndpoint: https://zync-sso:XXXXX@keycloak-redhat-rhoam-user-sso.apps.md-gh-rh-rosa-2.66u6.p1.openshiftapps.com/auth/realms/daybreak
+          issuerEndpoint: https://zync-sso:XXXXX@keycloak-redhat-rhoam-user-sso.apps.md-gh-rh-rosa-2.66u6.p1.openshiftapps.com/auth/realms/fhir
           issuerType: keycloak
           credentials: headers
           authenticationFlow:
